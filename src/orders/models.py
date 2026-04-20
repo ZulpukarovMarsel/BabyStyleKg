@@ -1,22 +1,41 @@
 from django.db import models
+from django.utils.text import slugify
 from accounts.models import User
 from products.models import Product
 
 
 class StatusOrder(models.Model):
     title = models.CharField(max_length=255)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"StatusOrder(id={self.id}, title={self.title})"
+        return self.title
+
+    class Meta:
+        verbose_name = "Статус заказа"
+        verbose_name_plural = "Статусы заказов"
 
 
 class PaymentMethod(models.Model):
     title = models.CharField(max_length=255)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"PaymentMethod(id={self.id}, title={self.title})"
+        return self.title
+
+    class Meta:
+        verbose_name = "Метод оплаты"
+        verbose_name_plural = "Методы оплаты"
 
 
 class Order(models.Model):
@@ -40,7 +59,17 @@ class Order(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"Order(id={self.id})"
+        return f"Заказ №{self.id} ({self.first_name} {self.last_name})"
+
+    class Meta:
+        verbose_name = "Заказ"
+        verbose_name_plural = "Заказы"
+        ordering = ['-created_at']
+
+    def update_total_price(self):
+        items_total = sum(item.get_total_price() for item in self.items.all())
+        self.total_price = items_total + self.delivery_price
+        self.save()
 
 
 class OrderItem(models.Model):
@@ -53,6 +82,10 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.title} x {self.quantity}"
+
+    class Meta:
+        verbose_name = "Товар в заказе"
+        verbose_name_plural = "Товары в заказе"
 
     @property
     def total_price(self):

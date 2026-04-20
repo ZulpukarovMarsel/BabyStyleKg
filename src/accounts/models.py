@@ -14,11 +14,15 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, password=None, **extra_fields):
-        extra_fields.setdefault("is_admin", True)
-
+        extra_fields.setdefault("is_active", True)
+        if not extra_fields.get("is_active"):
+            raise ValueError(_("is_admin must have is_admin=True."))
+        extra_fields.setdefault("is_staff", True)
+        if not extra_fields.get("is_staff"):
+            raise ValueError(_("is_admin must have is_admin=True."))
+        extra_fields.setdefault("is_superuser", True)
         if not extra_fields.get("is_superuser"):
-            raise ValueError(_("Superuser must have is_superuser=True."))
-
+            raise ValueError(_("is_admin must have is_admin=True."))
         return self.create_user(email, password, **extra_fields)
 
 
@@ -30,7 +34,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=255)
 
     is_active = models.BooleanField(default=True)
-    is_admin = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
 
     objects = UserManager()
 

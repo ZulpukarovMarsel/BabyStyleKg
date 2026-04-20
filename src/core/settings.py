@@ -34,7 +34,7 @@ APPS = [
     "carts",
     "orders",
     "products",
-    "common"
+    "common",
 ]
 
 
@@ -47,8 +47,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
+    'solo',
+    *APPS,
     *OAUTH_APPS,
-    *APPS
 ]
 
 SITE_ID = 1
@@ -88,20 +89,31 @@ WSGI_APPLICATION = 'core.wsgi.application'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Cors
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://192.168.0.102:5173"
-]
+CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS").split(",")
 CORS_ALLOW_CREDENTIALS = True
 
 # Database
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': config("DB_NAME"),
+            'USER': config("DB_USER"),
+            'PASSWORD': config("DB_PASSWORD"),
+            'HOST': config("DB_HOST"),
+            'PORT': config("DB_PORT"),
+        }
+    }
+
+
 # RestFrameWork
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -199,9 +211,23 @@ USE_TZ = True
 AUTH_USER_MODEL = 'accounts.User'
 
 # Static files (CSS, JavaScript, Images)
-
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'static'
+STATICFILES_DIRS = [
+    BASE_DIR / "static_data",
+]
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Jazzmin
+# JAZZMIN_SETTINGS = {
+#     "changeform_format_overrides": {
+#         "auth.user": "collapsible",
+#         "products.product": "collapsible",
+#     }
+# }
