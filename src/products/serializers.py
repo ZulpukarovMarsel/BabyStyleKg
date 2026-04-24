@@ -1,6 +1,7 @@
 from django.db.models import Avg
 from rest_framework import serializers
-from .models import Product, ProductImage, ProductReview, Brand, Category, AgeGroup
+from .models import Product, ProductImage, ProductReview, Brand, Category, AgeGroup, Favorite
+from accounts.serializers import CustomUerDetailSerializer
 
 
 class ProductImageSerializer(serializers.ModelSerializer):
@@ -10,6 +11,8 @@ class ProductImageSerializer(serializers.ModelSerializer):
 
 
 class ProductReviewSerializer(serializers.ModelSerializer):
+    user = CustomUerDetailSerializer(read_only=True)
+
     class Meta:
         model = ProductReview
         fields = '__all__'
@@ -69,6 +72,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
     age_group = AgeGroupSerializer(read_only=True)
     rating = serializers.SerializerMethodField()
     rating_count = serializers.SerializerMethodField()
+    reviews = ProductReviewSerializer(read_only=True, many=True)
 
     class Meta:
         model = Product
@@ -89,3 +93,10 @@ class ProductDetailSerializer(serializers.ModelSerializer):
 
     def get_rating_count(self, obj):
         return obj.reviews.count()
+
+
+class FavoriteSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Favorite
+        fields = '__all__'

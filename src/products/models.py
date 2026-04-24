@@ -133,6 +133,8 @@ class ProductReview(models.Model):
     rating = models.PositiveIntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(10)]
     )
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"Отзыв от {self.user.first_name} на {self.product.title}"
@@ -140,3 +142,13 @@ class ProductReview(models.Model):
     class Meta:
         verbose_name = "Отзыв"
         verbose_name_plural = "Отзывы"
+
+
+class Favorite(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="favorites")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="favorites")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'product')
+        ordering = ['-created_at']

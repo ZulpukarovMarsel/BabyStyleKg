@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import SiteSettings, Banner
+from .models import SiteSettings, Banner, Review
 from solo.admin import SingletonModelAdmin
 
 
@@ -10,4 +10,9 @@ class SiteSettingsAdmin(SingletonModelAdmin):
 
 @admin.register(Banner)
 class BannerAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
     pass

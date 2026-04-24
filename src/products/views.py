@@ -1,9 +1,9 @@
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import Product, ProductImage, ProductReview, AgeGroup, Brand, Category
+from .models import Product, ProductImage, ProductReview, AgeGroup, Brand, Category, Favorite
 from .serializers import (
     ProductSerializer, ProductImageSerializer, ProductDetailSerializer, ProductReviewSerializer,
-    AgeGroupSerializer, BrandSerializer, CategorySerializer
+    AgeGroupSerializer, BrandSerializer, CategorySerializer, FavoriteSerializer
 )
 from .filters import ProductFilter
 
@@ -56,3 +56,8 @@ class DiscountedProductViewSet(ModelViewSet):
 
     def get_queryset(self):
         return Product.objects.filter(discount__gt=0)
+
+
+class FavoriteViewSet(ModelViewSet):
+    queryset = Favorite
+    serializer_class = FavoriteSerializer

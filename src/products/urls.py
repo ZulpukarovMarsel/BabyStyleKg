@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import (
     ProductViewSet, ProductReviewViewSet, DiscountedProductViewSet,
-    CategoryViewSet, BrandViewSet, AgeGroupViewSet
+    CategoryViewSet, BrandViewSet, AgeGroupViewSet, FavoriteViewSet
 )
 
 
@@ -21,5 +21,6 @@ urlpatterns = [
     })),
     path('products/category/', CategoryViewSet.as_view({'get': 'list'})),
     path('products/brands/', BrandViewSet.as_view({'get': 'list'})),
-    path('products/age_group/', AgeGroupViewSet.as_view({'get': 'list'}))
+    path('products/age_group/', AgeGroupViewSet.as_view({'get': 'list'})),
+    path('products/favorites/', FavoriteViewSet.as_view({'get': 'list', 'post': 'create'})),
 ]

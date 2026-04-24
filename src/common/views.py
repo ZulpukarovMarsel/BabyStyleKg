@@ -1,8 +1,8 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework import status
-from .models import SiteSettings, Banner
-from .serializers import SiteSettingsSerializer, BannerSerializer
+from .models import SiteSettings, Banner, Review
+from .serializers import SiteSettingsSerializer, BannerSerializer, ReviewSerializer
 
 
 class SiteSettingsViewSet(ModelViewSet):
@@ -23,3 +23,8 @@ class SiteSettingsViewSet(ModelViewSet):
 class BannerViewSet(ModelViewSet):
     queryset = Banner.objects.all()
     serializer_class = BannerSerializer
+
+
+class ReviewViewSet(ModelViewSet):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
