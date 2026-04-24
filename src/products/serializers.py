@@ -60,3 +60,32 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def get_rating_count(self, obj):
         return obj.reviews.count()
+
+
+class ProductDetailSerializer(serializers.ModelSerializer):
+    images = serializers.SerializerMethodField()
+    brand = BrandSerializer(read_only=True)
+    category = CategorySerializer(read_only=True)
+    age_group = AgeGroupSerializer(read_only=True)
+    rating = serializers.SerializerMethodField()
+    rating_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Product
+        fields = '__all__'
+
+    def get_images(self, obj):
+        request = self.context.get('request')
+
+        return [
+            request.build_absolute_uri(img.image.url) if request else img.image.url
+            for img in obj.images.all()
+            if img and img.image
+        ]
+
+    def get_rating(self, obj):
+        result = obj.reviews.aggregate(avg=Avg('rating'))
+        return result['avg'] or 0
+
+    def get_rating_count(self, obj):
+        return obj.reviews.count()

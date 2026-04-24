@@ -23,7 +23,7 @@ class SiteSettings(SingletonModel):
 class Banner(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
-    banner = models.ImageField(upload_to="banners/")
+    banner = models.ImageField(upload_to="site_images/")
     link = models.TextField()
 
     def __str__(self):
