@@ -96,7 +96,10 @@ class ProductDetailSerializer(serializers.ModelSerializer):
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
+    product = ProductSerializer(read_only=True)
+    product_id = serializers.IntegerField(write_only=True)
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Favorite
-        fields = '__all__'
+        fields = ['id', 'product', 'product_id', 'user', 'created_at']

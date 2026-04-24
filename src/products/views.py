@@ -1,4 +1,8 @@
+from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Product, ProductImage, ProductReview, AgeGroup, Brand, Category, Favorite
 from .serializers import (
@@ -59,5 +63,16 @@ class DiscountedProductViewSet(ModelViewSet):
 
 
 class FavoriteViewSet(ModelViewSet):
-    queryset = Favorite
     serializer_class = FavoriteSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Favorite.objects.filter(user=self.request.user)
+
+    @action(detail=False, methods=['delete'], url_path='(?P<product_id>\d+)')
+    def remove(self, request, product_id=None):
+        favorite = self.get_queryset().filter(product_id=product_id).first()
+        if favorite:
+            favorite.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({'detail': 'Not found.'}, status=status.HTTP_404_NOT_FOUND)

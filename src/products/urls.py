@@ -23,4 +23,5 @@ urlpatterns = [
     path('products/brands/', BrandViewSet.as_view({'get': 'list'})),
     path('products/age_group/', AgeGroupViewSet.as_view({'get': 'list'})),
     path('products/favorites/', FavoriteViewSet.as_view({'get': 'list', 'post': 'create'})),
+    path('products/favorites/<int:product_id>/', FavoriteViewSet.as_view({'delete': 'remove'})),
 ]
